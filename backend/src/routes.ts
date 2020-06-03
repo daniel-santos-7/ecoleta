@@ -1,11 +1,12 @@
-import {Router} from 'express';
+import { Router } from 'express';
+import ItemCtrl from './controllers/ItemCtrl';
+import PointCtrl from './controllers/PointCtrl';
 
-const router:Router = Router();
+const router = Router();
 
-router.get('/',(req,res)=> {
-
-    return res.json({msg:'test'});
-
-});
+router.get('/item',ItemCtrl.index);
+router.post('/point',PointCtrl.store);
+router.get('/point/:id',PointCtrl.show);
+router.get('/point',PointCtrl.index);
 
 export default router;
