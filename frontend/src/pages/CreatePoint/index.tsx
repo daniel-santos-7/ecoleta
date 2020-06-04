@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './styles.css';
 import { FiArrowLeft } from 'react-icons/fi'
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import { Map, TileLayer, Marker } from 'react-leaflet';
+import api from '../../services/api';
+
+interface Item {
+  id:number;
+  title:string;
+  image_url:string;
+}
 
 const CreatePoint: React.FC = () => {
+
+  const [items, setItems] = useState<Item[]>([]);
+
+  useEffect(()=> {
+
+    api.get('/item').then(resp=> { 
+    
+      setItems(resp.data) 
+    
+    });
+
+  },[]);
+
   return (
     <div id="page-create-point">
       <header>
@@ -73,30 +93,12 @@ const CreatePoint: React.FC = () => {
             <span>Selecione um ou mais ítens abaixo</span>
           </legend>
           <ul className="items-grid">
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="óleo"/>
-              <span>Item 1</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="óleo"/>
-              <span>Item 1</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="óleo"/>
-              <span>Item 1</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="óleo"/>
-              <span>Item 1</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="óleo"/>
-              <span>Item 1</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="óleo"/>
-              <span>Item 1</span>
-            </li>
+            { items.map(item=> (
+              <li key={item.id}>
+                <img src={item.image_url} alt={item.title}/>
+                <span>{item.title}</span>
+              </li>
+            )) }
           </ul>
         </fieldset>
         <button type="submit">Cadastrar ponto de coleta</button>
