@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, request } from 'express';
 import db from '../database/connection';
 
 class PointController {
@@ -10,7 +10,7 @@ class PointController {
             const { name, email, whatsapp, latitude, longitude, city, uf, items } = req.body;
 
             const newPoint = {
-                image:'img-fake',
+                image: req.file.filename,
                 name,
                 email,
                 whatsapp,
@@ -24,7 +24,9 @@ class PointController {
 
             const [point_id] = await trx('points').insert(newPoint);
 
-            const pointItems = items.map((item_id:number)=> ({
+            const pointItems = items.split(',')
+            .map((item:string)=> Number(item.trim()))
+            .map((item_id:number)=> ({
                 item_id,
                 point_id
             }));
@@ -82,7 +84,8 @@ class PointController {
             .whereIn('point_items.item_id',parsedItems)
             .where('city',String(city))
             .where('uf',String(uf))
-            .select('points.*');
+            .select('points.*')
+            .distinct();
 
             return res.json(points);
 
